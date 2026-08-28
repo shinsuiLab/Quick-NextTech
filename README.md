@@ -83,14 +83,6 @@ docker compose up -d --build
 ```
 Acceder en el navegador a `http://localhost`
 
-## Estado del proyecto
-
-- [ ] init.sql con tabla productos (30+ filas) — Jonathan
-- [ ] backend con endpoints /api/productos y /api/dashboard — Nicolas
-- [ ] frontend consumiendo backend — Angel
-- [ ] proxy/nginx.conf enrutando / → frontend y /api/ → backend — Angel
-- [ ] docker-compose.yml integrando los 4 servicios y 3 redes — Angel
-
 ## Contrato entre contenedores (NO romper sin avisar a los 3)
 
 ### Base de datos (Jonathan)
@@ -142,3 +134,12 @@ const db = mysql.createConnection({
 - Frontend escucha en puerto interno `3000`
 - Proxy enruta `/` → `frontend:3000` y `/api/` → `backend:3000`
 - Frontend NUNCA se accede directo desde el host, solo vía proxy en `http://localhost`
+
+
+## Estado del proyecto
+
+- [X] init.sql con tabla productos (30+ filas) — Jonathan
+- [ ] backend con endpoints /api/productos y /api/dashboard — Nicolas
+- [X] frontend consumiendo backend — Angel
+- [X] proxy/nginx.conf enrutando / → frontend y /api/ → backend — Angel
+- [ ] docker-compose.yml integrando los 4 servicios y 3 redes — Angel

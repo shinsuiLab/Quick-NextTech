@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8
+    container_name: quicknexttech-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/mysql
+    networks:
+      - red-datos
+
+  backend:
+    build: ./backend
+    container_name: quicknexttech-backend
+    environment:
+      DB_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      - db
+    networks:
+      - red-datos
+      - red-app
+
+  frontend:
+    build: ./frontend
+    container_name: quicknexttech-frontend
+    depends_on:
+      - backend
+    networks:
+      - red-acceso
+
+  proxy:
+    image: nginx:alpine
+    container_name: quicknexttech-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - red-acceso
+      - red-app
+
+networks:
+  red-acceso:
+  red-app:
+  red-datos:
+
+volumes:
+  db-data:
