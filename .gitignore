@@ -1,0 +1,21 @@
+# Variables de entorno (contiene credenciales reales)
+.env
+
+# Dependencias de Node
+node_modules/
+**/node_modules/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Docker
+*.pid

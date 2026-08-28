@@ -90,3 +90,55 @@ Acceder en el navegador a `http://localhost`
 - [ ] frontend consumiendo backend — Angel
 - [ ] proxy/nginx.conf enrutando / → frontend y /api/ → backend — Angel
 - [ ] docker-compose.yml integrando los 4 servicios y 3 redes — Angel
+
+## Contrato entre contenedores (NO romper sin avisar a los 3)
+
+### Base de datos (Jonathan)
+- Nombre de la base: `quicknexttech`
+- Tabla: `productos`
+- Columnas exactas: `id, nombre, categoria, precio, stock, unidades_vendidas`
+- Mínimo 30 filas (restricción 11: los productos deben crearse automáticamente vía init.sql)
+- El init.sql se monta como volumen en `/docker-entrypoint-initdb.d/` — NO se ejecuta a mano
+
+### Variables de entorno (usadas por db y backend)
+| Variable          | Usada en          | Descripción                              |
+|-------------------|--------------------|--------------------------------------------|
+| DB_ROOT_PASSWORD  | db (compose)        | contraseña root de MySQL                   |
+| DB_NAME           | db (compose)        | nombre de la base = quicknexttech          |
+| DB_PASSWORD       | backend (server.js) | contraseña que usa Node para conectarse a MySQL |
+
+Backend se conecta así (Nicolas debe usar esto exacto en su server.js):
+```js
+const db = mysql.createConnection({
+    host: "db",                      // nombre del servicio en docker-compose, no localhost ni IP
+    user: "root",
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || "quicknexttech"
+});
+```
+
+### Backend → Frontend (Nicolas expone, Angel consume)
+- Host interno: `backend`, puerto `3000`
+- `GET /api/productos` → devuelve un array de objetos:
+```json
+[
+  { "id": 1, "nombre": "...", "categoria": "...", "precio": 12.50, "stock": 40, "unidades_vendidas": 15 }
+]
+```
+- `GET /api/dashboard` → devuelve UN objeto con estas claves exactas (el frontend ya está armado para leer esta forma exacta, no cambiar nombres):
+```json
+{
+  "total": 30,
+  "promedio": 15.75,
+  "masBarato": { "nombre": "...", "precio": 5.00 },
+  "masCaro": { "nombre": "...", "precio": 40.00 },
+  "top3Economicos": [ { "nombre": "...", "precio": 5.00 }, ... ],
+  "top5Vendidos": [ { "nombre": "...", "unidades_vendidas": 90 }, ... ],
+  "stockTotal": 850
+}
+```
+
+### Frontend → Proxy (Angel)
+- Frontend escucha en puerto interno `3000`
+- Proxy enruta `/` → `frontend:3000` y `/api/` → `backend:3000`
+- Frontend NUNCA se accede directo desde el host, solo vía proxy en `http://localhost`
