@@ -1,0 +1,8 @@
+{
+  "name": "quicknexttech-frontend",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.3",
+    "axios": "^1.6.8"
+  }
+}
