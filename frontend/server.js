@@ -5,8 +5,8 @@ const app = express();
 app.get("/", async (req, res) => {
     try {
         const [productosResp, dashboardResp] = await Promise.all([
-            axios.get("http://backend:3000/api/productos"),
-            axios.get("http://backend:3000/api/dashboard")
+            axios.get("http://proxy/api/productos"),
+            axios.get("http://proxy/api/dashboard")
         ]);
 
         const productos = productosResp.data;
