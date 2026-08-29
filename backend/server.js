@@ -4,9 +4,6 @@ const mysql = require("mysql2");
 const app = express();
 
 // Conexión a MySQL.
-// host: "db" es el nombre del servicio en docker-compose.yml.
-// Docker resuelve ese nombre por DNS dentro de la red "red-datos" (no se usan IPs ni localhost).
-// La contraseña y el nombre de la base llegan por variables de entorno (nunca escritas en el código).
 const db = mysql.createPool({
     host: "db",
     user: "root",
@@ -16,9 +13,6 @@ const db = mysql.createPool({
     connectionLimit: 10
 }).promise();
 
-// MySQL tarda unos segundos en inicializarse la primera vez (crea la base y ejecuta init.sql).
-// Este bucle reintenta la conexión hasta que la base responde, así no hace falta
-// ejecutar ningún comando manual después de "docker compose up" (restricción 13).
 async function esperarBD() {
     while (true) {
         try {
