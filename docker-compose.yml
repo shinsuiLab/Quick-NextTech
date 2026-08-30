@@ -12,7 +12,7 @@ services:
       - red-datos
 
   backend:
-    build: ./backend
+    image: yamikaru/quicknexttech-backend:1.0
     container_name: quicknexttech-backend
     environment:
       DB_PASSWORD: ${DB_ROOT_PASSWORD}
@@ -24,7 +24,7 @@ services:
       - red-app
 
   frontend:
-    build: ./frontend
+    image: angelparedesh2o/quicknexttech-frontend:1.0
     container_name: quicknexttech-frontend
     depends_on:
       - backend
